@@ -1,0 +1,212 @@
+Program:
+-------
+
+import java.util.*;
+class Employee {
+    private int id;
+    private String name;
+    private String department;
+    private int managerId; 
+
+    public Employee(int id, String name, String department, int managerId) {
+        this.id = id;
+        this.name = name;
+        this.department = department;
+        this.managerId = managerId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public int getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(int managerId) {
+        this.managerId = managerId;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee ID: "+id+"\n Employee Name: "+name+"\n Employee Department: "+department +"\n Manager ID: "+managerId;
+    }
+}
+
+
+
+
+//EmployeeManager Class
+
+class EmployeeManager {
+    private Map<Integer, Employee> employees = new HashMap<>();
+
+    //Method to add a new employee
+    public void addEmployee(Employee employee) {
+        if (employees.containsKey(employee.getId())) {
+            System.out.println("Employee with ID " + employee.getId() + " already exists.");
+        } else {
+            employees.put(employee.getId(), employee);
+            System.out.println("Employee added: " + employee);
+        }
+    }
+
+    //Method to update an existing employee
+    public void updateEmployee(int id, String name, String department, Integer managerId) {
+        Employee employee = employees.get(id);
+        if (employee != null) {
+            employee.setName(name);
+            employee.setDepartment(department);
+            employee.setManagerId(managerId);
+            System.out.println("Employee updated: " + employee);
+        } else {
+            System.out.println("Employee with ID " + id + " not found.");
+        }
+    }
+
+    //Method to delete an employee
+    public void deleteEmployee(int id) {
+        Employee removed = employees.remove(id);
+        if (removed != null) {
+            System.out.println("Employee removed: " + removed);
+        } else {
+            System.out.println("Employee with ID " + id + " not found.");
+        }
+    }
+
+    //Search method to search employee by name
+    public void searchByName(String name) {
+        boolean found = false;
+        for (Employee employee : employees.values()) {
+            if (employee.getName().equalsIgnoreCase(name)) {
+                System.out.println(employee);
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("No employee found with name: " + name);
+        }
+    }
+
+    //Search method to search employee by department
+    public void searchByDepartment(String department) {
+        boolean found = false;
+        for (Employee employee : employees.values()) {
+            if (employee.getDepartment().equalsIgnoreCase(department)) {
+                System.out.println(employee);
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("No employee found in department: " + department);
+        }
+    }
+
+}
+
+
+//Main Class
+
+public class EmployeeManagementSystem {
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        EmployeeManager manager = new EmployeeManager();
+        
+        while(true) {
+            System.out.println();
+            System.out.println("Employee Record Management System");
+            System.out.println("1. Add Employee");
+            System.out.println("2. Update Employee");
+            System.out.println("3. Delete Employee");
+            System.out.println("4. Search by Name");
+            System.out.println("5. Search by Department");
+            System.out.println("6. Exit");
+            System.out.print("Choose an option: ");
+            
+            int choice = sc.nextInt();
+            sc.nextLine();
+            
+            switch(choice) {
+                case 1: 
+                    System.out.println("Enter ID: ");
+                    int id = sc.nextInt();
+                    sc.nextLine(); 
+                    System.out.println("Enter Name: ");
+                    String name = sc.nextLine();
+                    System.out.println("Enter Department: ");
+                    String department = sc.nextLine();
+                    System.out.println("Enter Manager ID and 0 for none: ");
+                    int managerId = sc.nextInt();
+                    sc.nextLine(); // Consume newline
+                    manager.addEmployee(new Employee(id, name, department, managerId));
+                    System.out.println();
+                    break;
+                    
+                case 2: 
+                    System.out.println("Enter ID: ");
+                    id = sc.nextInt();
+                    sc.nextLine(); 
+                    System.out.println("Enter Name: ");
+                    name = sc.nextLine();
+                    System.out.println("Enter Department: ");
+                    department = sc.nextLine();
+                    System.out.println("Enter Manager ID and 0 for none: ");
+                    managerId = sc.nextInt();
+                    sc.nextLine(); 
+                    manager.updateEmployee(id, name, department, managerId);
+                    System.out.println();
+                    break;
+                    
+                case 3: 
+                    System.out.println("Enter ID: ");
+                    id = sc.nextInt();
+                    sc.nextLine(); 
+                    manager.deleteEmployee(id);
+                    System.out.println();
+                    break;
+                    
+                case 4: 
+                    System.out.println("Enter Name: ");
+                    name = sc.nextLine();
+                    manager.searchByName(name);
+                    System.out.println();
+                    break;
+                    
+                case 5: 
+                    System.out.println("Enter Department: ");
+                    department = sc.nextLine();
+                    manager.searchByDepartment(department);
+                    System.out.println();
+                    break;
+                    
+                case 6: 
+                    System.out.println("Exiting the system");
+                    System.exit(0);
+                    break;
+                    
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+}
