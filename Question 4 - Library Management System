@@ -1,0 +1,393 @@
+Question 4:        Library MAnagement System
+---------          --------------------------
+
+- Admin can manage book inventory (add, update, remove books).
+- Members can register, borrow, and return books.
+- Track book availability and member borrowing history.
+- Implement search functionality by title, author, or genre.
+- Limit borrowing to a maximum of 5 books for up to 30 day
+
+
+
+Program:
+-------
+
+import java.util.*;
+
+
+//Book Class
+
+class Book {
+    private int id;
+    private String title;
+    private String author;
+    private String genre;
+    private boolean isAvailable;
+
+    public Book(int id, String title, String author, String genre) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+        this.isAvailable = true;
+    }
+
+    // Getters and Setters
+    public int getId() {
+        return id;
+    }
+    
+    public void setId(int id){
+        this.id=id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title){
+        this.title=title;
+    }
+    public String getAuthor() {
+        return author;
+    }
+    
+    public void setAuthor(String author){
+        this.author=author;
+    }
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre){
+        this.genre=genre;
+    }
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
+    @Override
+    public String toString() {
+        return "Id: "+id+"\n Title: " +title+ "\n Author:"+author+"\n Genre"+genre;
+    }
+}
+
+
+
+
+//Member class
+
+class Member {
+    private int id;
+    private String name;
+    private List<Book> borrowedBooks;
+    private static final int Max_Borrow_Limit = 5;
+
+    public Member(int id, String name) {
+        this.id = id;
+        this.name = name;
+        this.borrowedBooks = new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Book> getBorrowedBooks() {
+        return borrowedBooks;
+    }
+
+    public boolean borrowBook(Book book) {
+        if (borrowedBooks.size()<Max_Borrow_Limit && book.isAvailable()) {
+            borrowedBooks.add(book);
+            book.setAvailable(false);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean returnBook(Book book) {
+        if (borrowedBooks.remove(book)) {
+            book.setAvailable(true);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Member Id:"+id+"\n Member Name: "+name;
+    }
+}
+
+
+
+
+//Library class
+
+class Library {
+    private List<Book> books;
+    private List<Member> members;
+
+    public Library() {
+        this.books = new ArrayList<>();
+        this.members = new ArrayList<>();
+    }
+
+    //Method to add book
+    public void addBook(Book book) {
+        books.add(book);
+    }
+
+    public void updateBook(int id, String title, String author, String genre) {
+        for (Book book : books) {
+            if (book.getId() == id) {
+                book.setTitle(title);
+                book.setAuthor(author);
+                book.setGenre(genre);
+                break;
+            }
+        }
+    }
+
+    //Method to remove book from list
+    public void removeBook(int id) {
+        books.removeIf(book -> book.getId() == id);
+    }
+
+    //Method to add members
+    public void addMember(Member member) {
+        members.add(member);
+    }
+
+    //Method to borrow books
+    public boolean borrowBook(int memberId, int bookId) {
+        Member member = null;
+        for (Member m : members) {
+            if (m.getId() == memberId) {
+                member = m;
+                break;
+            }
+        }
+
+        if (member == null) {
+            return false;
+        }
+
+        Book book = null;
+        for (Book b : books) {
+            if (b.getId() == bookId) {
+                book = b;
+                break;
+            }
+        }
+
+        if (book == null) {
+            return false;
+        }
+
+        return member.borrowBook(book);
+    }
+
+   //Method to return books
+    public boolean returnBook(int memberId, int bookId) {
+        Member member = null;
+        for (Member m : members) {
+            if (m.getId() == memberId) {
+                member = m;
+                break;
+            }
+        }
+
+        if (member == null) {
+            return false;
+        }
+
+        Book book = null;
+        for (Book b : books) {
+            if (b.getId() == bookId) {
+                book = b;
+                break;
+            }
+        }
+
+        if (book == null) {
+            return false;
+        }
+
+        return member.returnBook(book);
+    }
+
+    //Methods to Ddsplay library info
+    public void displayBooks() {
+        books.forEach(System.out::println);
+    }
+
+    public void displayMembers() {
+        members.forEach(System.out::println);
+    }
+}
+
+//Main class 
+
+public class LibraryManagementSystem {
+    public static void main(String[] args) {
+        Scanner sc= new Scanner(System.in);
+        Library library = new Library();
+
+        
+        library.addBook(new Book(1, "Java", "Feddy", "Education"));
+        library.addBook(new Book(2, "Secret of success", "Bala", "Motivation"));
+       
+
+        library.addMember(new Member(1, "Ann"));
+        library.addMember(new Member(2, "Bala"));
+
+        boolean isAdmin = false;
+        
+        final String ADMIN_USERNAME = "admin";
+        final String ADMIN_PASSWORD = "password";
+
+        System.out.print("Enter role (admin/user): ");
+        String role = sc.nextLine();
+
+        if (role.equalsIgnoreCase("admin")) {
+
+        System.out.println("Enter username: ");
+        String username=sc.nextLine();
+        System.out.println("Enter password: ");
+        String password=sc.nextLine();
+
+        if (username.equals(ADMIN_USERNAME) && password.equals(ADMIN_PASSWORD)) {
+            isAdmin = true;
+            System.out.println("Logged in as admin.");
+            System.out.println();
+        } 
+        }
+        else {
+            System.out.println("Logged in as user.");
+            System.out.println();
+        }
+
+        while (true) {
+            System.out.println("Library Management System");
+            if (isAdmin) {
+                System.out.println("1. Add Book");
+                System.out.println("2. Update Book");
+                System.out.println("3. Remove Book");
+                System.out.println("4. Add Member");
+            }
+            System.out.println("5. Borrow Book");
+            System.out.println("6. Return Book");
+            System.out.println("7. Display All Books");
+            System.out.println("8. Display All Members");
+            System.out.println("9. Exit");
+             System.out.println();
+            System.out.print("Choose an option: ");
+
+            int choice = sc.nextInt();
+            sc.nextLine(); 
+
+            switch (choice) {
+                case 1: 
+                    if (isAdmin) {
+                        System.out.println("Enter Book ID: ");
+                        int bookId = sc.nextInt();
+                        sc.nextLine(); 
+                        System.out.println("Enter Book Title: ");
+                        String bookTitle = sc.nextLine();
+                        System.out.println("Enter Book Author: ");
+                        String bookAuthor = sc.nextLine();
+                        System.out.println("Enter Book Genre: ");
+                        String bookGenre = sc.nextLine();
+                        library.addBook(new Book(bookId, bookTitle, bookAuthor, bookGenre));
+                         System.out.println();
+                    } 
+                    break;
+                case 2: 
+                    if (isAdmin) {
+                        System.out.println("Enter Book ID: ");
+                        int bookId = sc.nextInt();
+                        sc.nextLine(); 
+                        System.out.println("Enter Book Title: ");
+                        String bookTitle = sc.nextLine();
+                        System.out.println("Enter Book Author: ");
+                        String bookAuthor = sc.nextLine();
+                        System.out.println("Enter Book Genre: ");
+                        String bookGenre = sc.nextLine();
+                        library.updateBook(bookId, bookTitle, bookAuthor, bookGenre);
+                        System.out.println();
+                    } 
+                    break;
+                case 3: 
+                    if (isAdmin) {
+                        System.out.println("Enter Book ID: ");
+                        int bookId = sc.nextInt();
+                        sc.nextLine(); 
+                        library.removeBook(bookId);
+                         System.out.println();
+                    } 
+                    break;
+                case 4: 
+                    if (isAdmin) {
+                        System.out.println("Enter Member ID: ");
+                        int memberId = sc.nextInt();
+                        sc.nextLine(); 
+                        System.out.println("Enter Member Name: ");
+                        String memberName = sc.nextLine();
+                        library.addMember(new Member(memberId, memberName));
+                         System.out.println();
+                    } 
+                    break;
+                case 5: 
+                    System.out.println("Enter Member ID: ");
+                    int memberId = sc.nextInt();
+                    System.out.println("Enter Book ID: ");
+                    int bookId = sc.nextInt();
+                    if (library.borrowBook(memberId, bookId)) {
+                        System.out.println("Book borrowed successfully.");
+                         System.out.println();
+                    } else {
+                        System.out.println("Failed to borrow book(Book unavailable or limit exceeded.");
+                         System.out.println();
+                    }
+                    break;
+                case 6: 
+                    System.out.println("Enter Member ID: ");
+                    memberId = sc.nextInt();
+                    System.out.println("Enter Book ID: ");
+                    bookId = sc.nextInt();
+                    if (library.returnBook(memberId, bookId)) {
+                        System.out.println("Book returned successfully.");
+                        System.out.println();
+                    } else {
+                        System.out.println("Error!!! Failed to return book. ");
+                         System.out.println();
+                    }
+                    break;
+                case 7: 
+                    library.displayBooks();
+                     System.out.println();
+                    break;
+                case 8: 
+                    library.displayMembers();
+                     System.out.println();
+                    break;
+                case 9: 
+                    System.out.println("Exiting the system.");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+}
+
