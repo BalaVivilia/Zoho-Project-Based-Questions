@@ -1,0 +1,347 @@
+Question 2:            Event Management System
+-----------            ------------------------
+
+Admin - add,delete and update events.
+User - register for an event,cancel registration and View event details.
+
+
+
+Program:
+-------
+
+
+
+import java.time.LocalDate;
+import java.util.*;
+
+//Event class
+class Event {
+    private int id;
+    private String name;
+    private LocalDate date;
+    private String type;
+    private List<User> attendees;
+
+    public Event(int id, String name, LocalDate date, String type) {
+        this.id=id;
+        this.name=name;
+        this.date=date;
+        this.type=type;
+        this.attendees=new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id=id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name=name;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type=type;
+    }
+
+    public List<User> getAttendees() {
+        return attendees;
+    }
+
+    public void addAttendee(User user) {
+        this.attendees.add(user);
+    }
+
+    public void removeAttendee(User user) {
+        this.attendees.remove(user);
+    }
+
+    @Override
+    public String toString() {
+        return "Event ID: "+id+"\n Event Name: "+name+"\n Date: "+date+"\n Event Type: "+type+"\n Attendees: "+attendees.size();
+    }
+}
+
+
+
+
+//User class
+
+class User {
+    private int id;
+    private String name;
+
+    public User(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "User ID: "+id+"\n User Name: "+name;
+    }
+}
+
+
+
+
+//Event Manager class
+
+class EventManager {
+    private Map<Integer, Event> events = new HashMap<>();
+    private Map<Integer, User> users = new HashMap<>();
+
+    // Admin methods to manage events
+    public void createEvent(int id, String name, LocalDate date, String type) {
+        if (events.containsKey(id)) {
+            System.out.println("Event with ID " + id + " already exists.");
+        } else {
+            Event event = new Event(id, name, date, type);
+            events.put(id, event);
+            System.out.println("Event created: " + event);
+        }
+    }
+
+    public void updateEvent(int id, String name, LocalDate date, String type) {
+        Event event = events.get(id);
+        if (event != null) {
+            event.setName(name);
+            event.setDate(date);
+            event.setType(type);
+            System.out.println("Event updated: " + event);
+        } else {
+            System.out.println("Event with ID " + id + " not found.");
+        }
+    }
+
+    public void deleteEvent(int id) {
+        Event removed = events.remove(id);
+        if (removed != null) {
+            System.out.println("Event removed: " + removed);
+        } else {
+            System.out.println("Event with ID " + id + " not found.");
+        }
+    }
+
+    public void addUser(int id, String name) {
+        if (users.containsKey(id)) {
+            System.out.println("User with ID "+id+ " already exists.");
+        } else {
+            User user=new User(id, name);
+            users.put(id, user);
+            System.out.println("User added: " + user);
+        }
+    }
+
+    //Method for the user to register for an event
+    public void registerUserForEvent(int userId, int eventId) {
+        User user=users.get(userId);
+        Event event=events.get(eventId);
+        if (user!=null && event!=null) {
+            event.addAttendee(user);
+            System.out.println("User "+user+" registered for event: "+event);
+        } else {
+            System.out.println("User or Event not found.");
+        }
+    }
+
+   
+    //Method for the users to cancel their registration
+    public void cancelRegistration(int userId, int eventId) {
+        User user=users.get(userId);
+        Event event=events.get(eventId);
+        if (user!=null && event!=null) {
+            event.removeAttendee(user);
+            System.out.println("Registration canceled for user "+user+" from event:"+event);
+        } else {
+            System.out.println("User or Event not found.");
+        }
+    }
+    
+    
+    //Method for the users to view the event details
+    public void viewEventDetails(int id) {
+        Event event=events.get(id);
+        if (event!=null) {
+            System.out.println("Event details: "+event);
+        } else {
+            System.out.println("Event with ID " + id + " not found.");
+        }
+    }
+}
+
+
+
+//Main class
+
+public class EventManagementSystem {
+    private static boolean isAdmin = false;
+
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        EventManager eventManager = new EventManager();
+
+        //Admin Username and password
+        final String ADMIN_USERNAME = "admin";
+        final String ADMIN_PASSWORD = "password";
+
+
+        System.out.println("Enter username: ");
+        String username=sc.nextLine();
+        System.out.println("Enter password: ");
+        String password=sc.nextLine();
+
+        if (username.equals(ADMIN_USERNAME) && password.equals(ADMIN_PASSWORD)) {
+            isAdmin = true;
+            System.out.println("Logged in as admin.");
+            System.out.println();
+        } else {
+            System.out.println("Logged in as user.");
+            System.out.println();
+        }
+
+        while (true) {
+            System.out.println("Event Management System");
+            if (isAdmin) {
+                System.out.println("1. Create Event");
+                System.out.println("2. Update Event");
+                System.out.println("3. Delete Event");
+                System.out.println("4. Add User");
+            }
+            
+            System.out.println("5. Register for Event");
+            System.out.println("6. Cancel Registration");
+            System.out.println("7. View Event Details");
+            System.out.println("8. Exit");
+            
+            System.out.println("Choose an option: ");
+
+            int choice=sc.nextInt();
+            sc.nextLine(); 
+
+            switch (choice) {
+                case 1: 
+                    if (isAdmin) {
+                        System.out.println("Enter Event ID: ");
+                        int eventId=sc.nextInt();
+                        sc.nextLine(); 
+                        System.out.println("Enter Event Name: ");
+                        String eventName=sc.nextLine();
+                        System.out.println("Enter Event Date yyyy-mm-dd: ");
+                        LocalDate eventDate=LocalDate.parse(sc.nextLine());
+                        System.out.println("Enter Event Type: ");
+                        String eventType=sc.nextLine();
+                        eventManager.createEvent(eventId, eventName, eventDate, eventType);
+                        System.out.println();
+                    } 
+                    break;
+                case 2: 
+                    if (isAdmin) {
+                        System.out.println("Enter Event ID: ");
+                        int eventId=sc.nextInt();
+                        sc.nextLine(); 
+                        System.out.println("Enter New Event Name: ");
+                        String eventName=sc.nextLine();
+                        System.out.println("Enter New Event Date yyyy-mm-dd: ");
+                        LocalDate eventDate = LocalDate.parse(sc.nextLine());
+                        System.out.println("Enter New Event Type: ");
+                        String eventType=sc.nextLine();
+                        eventManager.updateEvent(eventId, eventName, eventDate, eventType);
+                        System.out.println();
+                    }
+                    break;
+                case 3: 
+                    if (isAdmin) {
+                        System.out.println("Enter Event ID: ");
+                        int eventId = sc.nextInt();
+                        sc.nextLine(); 
+                        eventManager.deleteEvent(eventId);
+                        System.out.println();
+                    }
+                    break;
+                case 4: 
+                    if (isAdmin) {
+                        System.out.println("Enter User ID: ");
+                        int userId=sc.nextInt();
+                        sc.nextLine(); 
+                        System.out.println("Enter User Name: ");
+                        String userName=sc.nextLine();
+                        eventManager.addUser(userId, userName);
+                        System.out.println();
+                    } 
+                    break;
+                case 5: 
+                    System.out.println("Enter User ID: ");
+                    int userId = sc.nextInt();
+                    sc.nextLine(); 
+                    System.out.println("Enter Event ID: ");
+                    int eventId = sc.nextInt();
+                    sc.nextLine();
+                    eventManager.registerUserForEvent(userId, eventId);
+                    System.out.println();
+                    break;
+                case 6:
+                    System.out.println("Enter User ID: ");
+                    userId=sc.nextInt();
+                    sc.nextLine();
+                    System.out.println("Enter Event ID: ");
+                    eventId=sc.nextInt();
+                    sc.nextLine(); 
+                    eventManager.cancelRegistration(userId, eventId);
+                    System.out.println();
+                    break;
+                case 7: 
+                    System.out.println("Enter Event ID: ");
+                    eventId=sc.nextInt();
+                    sc.nextLine();
+                    eventManager.viewEventDetails(eventId);
+                    System.out.println();
+                    break;
+                case 8:
+                    System.out.println("Exiting the system");
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+}
+
+
+
+
